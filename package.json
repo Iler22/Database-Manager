@@ -1,6 +1,26 @@
 {
+  "name": "database-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Iler22/Database-Manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Iler22/Database-Manager/issues"
+  },
+  "homepage": "https://github.com/Iler22/Database-Manager#readme",
   "dependencies": {
     "console.table": "^0.10.0",
+    "dotenv": "^14.3.2",
     "inquirer": "^8.2.0",
     "mysql2": "^2.3.3"
   }
