@@ -137,49 +137,95 @@ const addRole = () => {
 };
 
 const addEmployee = () => {
-  db.query('SELECT * FROM employee', (err, res) => {
+  db.query('SELECT * FROM role', (err, res) => {
     if (err) throw err;
-    inquirer
-      .prompt([
-        {
-          type: 'input',
-          name: 'first_name',
-          message: 'Please enter the employees first name',
-        },
-        {
-          type: 'input',
-          name: 'last_name',
-          message: 'Please enter the employees last name',
-        },
-        {
-          type: 'input',
-          name: 'role_id',
-          message: 'What is the employees role?',
-        },
-        {
-          type: 'input',
-          name: 'manager_id',
-          message: 'Who is the employees manager?',
-          choices() {
-            return res.map(({ first_name, last_name, role_id, manager_id }) => {
-              return {
-                name: first_name + ' ' + last_name,
-                role: role_id,
-                manager: manager_id,
-              };
-            });
+    const roles = res.map((r) => ({ name: r.title, value: r.id }));
+    db.query('SELECT * FROM employee', (err1, res1) => {
+      const employees = res1.map((r) => ({ name: r.first_name, value: r.id }));
+      inquirer
+        .prompt([
+          {
+            type: 'input',
+            name: 'first_name',
+            message: 'Please enter the employees first name',
           },
-        },
-      ])
-      .then((userChoice) => {
-        db.query('INSERT INTO employee SET ?', userChoice, (err, res) => {
-          if (err) throw err;
-          console.log(
-            `${userChoice.first_name} and ${userChoice.last_name} have been added`
+          {
+            type: 'input',
+            name: 'last_name',
+            message: 'Please enter the employees last name',
+          },
+          {
+            type: 'list',
+            name: 'role_id',
+            message: 'What is the employees role?',
+            choices: roles,
+          },
+          {
+            type: 'list',
+            name: 'manager_id',
+            message: 'Who is the employees manager?',
+            choices: employees,
+          },
+        ])
+        .then((userChoice) => {
+          console.log(userChoice);
+          db.query(
+            'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)',
+            [
+              userChoice.first_name,
+              userChoice.last_name,
+              userChoice.role_id,
+              userChoice.manager_id,
+            ],
+            (err, res) => {
+              if (err) throw err;
+              console.log(
+                `${userChoice.first_name} and ${userChoice.last_name} have been added`
+              );
+              startQuery();
+            }
           );
-          startQuery();
         });
-      });
+    });
+  });
+};
+
+const updateEmployee = () => {
+  db.query('SELECT * FROM role', (err, res) => {
+    if (err) throw err;
+    const roles = res.map((r) => ({ name: r.title, value: r.id }));
+    db.query('SELECT * from employee', (err, res1) => {
+      const employees = res1.map((r) => ({
+        value: r.id,
+      }));
+      inquirer
+        .prompt([
+          {
+            type: 'list',
+            name: 'employee_id',
+            message: 'Which employees role do you want to update?',
+            choices: employees,
+          },
+          {
+            type: 'list',
+            name: 'title',
+            message: 'Which role do you want to assign the selected employee',
+            choices: roles,
+          },
+        ])
+        .then((userChoice) => {
+          console.log(userChoice);
+          db.query(
+            'UPDATE employee SET name=title WHERE id=employee_id',
+            [userChoice.employee_id, userChoice.title],
+            (err, res) => {
+              if (err) throw err;
+              console.log('Updated employees role');
+              startQuery();
+            }
+          );
+        });
+    });
   });
 };
 // [
