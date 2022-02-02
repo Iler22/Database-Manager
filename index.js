@@ -24,7 +24,7 @@ const startQuery = () => {
         'Add a department',
         'Add a role',
         'Add an employee',
-        'Update employee role',
+        'Update an employee role',
         'Exit',
       ],
     })
@@ -191,13 +191,13 @@ const addEmployee = () => {
 };
 
 const updateEmployee = () => {
-  db.query('SELECT * FROM role', (err, res) => {
+  db.query('SELECT * from employee', (err, res) => {
     if (err) throw err;
-    const roles = res.map((r) => ({ name: r.title, value: r.id }));
-    db.query('SELECT * from employee', (err, res1) => {
-      const employees = res1.map((r) => ({
-        value: r.id,
-      }));
+    const employees = res.map((r) => ({
+      value: r.id,
+    }));
+    db.query('SELECT * FROM role', (err1, res1) => {
+      const roles = res1.map((r) => ({ name: r.title, value: r.id }));
       inquirer
         .prompt([
           {
