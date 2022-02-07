@@ -50,6 +50,7 @@ const startQuery = () => {
           break;
         case 'Update an employee role':
           updateEmployee();
+          break;
         case 'exit':
           db.end();
           break;
