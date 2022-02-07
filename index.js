@@ -190,44 +190,96 @@ const addEmployee = () => {
   });
 };
 
+// const updateEmployee = () => {
+//   db.query('SELECT * FROM role', (err, res) => {
+//     if (err) throw err;
+//     const roles = res.map((r) => ({ name: r.title, value: r.id }));
+//     db.query('SELECT * FROM employee', (err1, res1) => {
+//       const employees = res1.map((r) => ({
+//         name: r.first_name,
+//         value: r.id,
+//       }));
+//       inquirer
+//         .prompt([
+//           {
+//             type: 'list',
+//             name: 'id',
+//             message: 'Which employees role do you want to update?',
+//             choices: employees,
+//           },
+//           {
+//             type: 'list',
+//             name: 'title',
+//             message: 'Which role do you want to assign the selected employee',
+//             choices: roles,
+//           },
+//         ])
+//         .then((userChoice) => {
+//           console.log(userChoice);
+//           db.query(
+//             'UPDATE employee SET name=title WHERE id=employee_id',
+//             [userChoice.employee_id, userChoice.title],
+//             (err, res) => {
+//               if (err) throw err;
+//               console.log('Updated employees role');
+//               startQuery();
+//             }
+//           );
+//         });
+//     });
+//   });
+// };
+
 const updateEmployee = () => {
-  db.query('SELECT * from employee', (err, res) => {
-    if (err) throw err;
-    const employees = res.map((r) => ({
-      value: r.id,
-    }));
-    db.query('SELECT * FROM role', (err1, res1) => {
-      const roles = res1.map((r) => ({ name: r.title, value: r.id }));
+  return db.query(
+    'SELECT employee.first_name, employee.last_name, employee.id, role.title, role.id FROM employee LEFT JOIN role ON employee.id = role.id',
+    (err, res) => {
       inquirer
         .prompt([
           {
+            name: 'employee',
             type: 'list',
-            name: 'employee_id',
-            message: 'Which employees role do you want to update?',
-            choices: employees,
+            choices() {
+              console.log('response console log', res);
+              return res.map(({ first_name, last_name, id }) => {
+                return { name: first_name + ' ' + last_name, value: id };
+              });
+            },
+            message: 'select employee to update ',
           },
           {
+            name: 'role',
             type: 'list',
-            name: 'title',
-            message: 'Which role do you want to assign the selected employee',
-            choices: roles,
+            choices() {
+              return res.map(({ id, title }) => {
+                return { name: title, value: id };
+              });
+            },
+            message: 'select new role',
           },
         ])
-        .then((userChoice) => {
-          console.log(userChoice);
+        .then((answer) => {
           db.query(
-            'UPDATE employee SET name=title WHERE id=employee_id',
-            [userChoice.employee_id, userChoice.title],
-            (err, res) => {
+            'UPDATE  employee SET ? WHERE ?',
+            [
+              {
+                role_id: answer.role,
+              },
+              {
+                id: answer.employee,
+              },
+            ],
+            function (err, res) {
               if (err) throw err;
-              console.log('Updated employees role');
+              console.log(`the ${answer.employee} role has been updated`);
               startQuery();
             }
           );
         });
-    });
-  });
+    }
+  );
 };
+
 // [
 //   {
 //     role_id: userChoice.role

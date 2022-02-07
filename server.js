@@ -12,4 +12,9 @@ const dbOptions = {
 const db = mysql.createConnection(dbOptions);
 console.log('Connected to the business_db database.');
 
+// db.connect((err) => {
+//   if (err) throw err;
+//   console.log('connected to db');
+// });
+
 module.exports = db;
