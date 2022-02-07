@@ -6,6 +6,12 @@
 
 The purpose of this project was to create an employee database that would return results via the command line using inquirer.
 
+## Demonstartion
+
+Please below demonstartion of Database Manager functionality.
+
+https://user-images.githubusercontent.com/89151536/152863260-af11030a-4e39-4d59-becb-3055c74af243.mp4
+
 ## Table of Contents
 
 - [Installation](#installation)
